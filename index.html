@@ -678,16 +678,23 @@ function preloadMedia(){
   }));
 
   const videoPromise = new Promise(resolve => {
-    if(video.readyState >= 2){
+    if(video.readyState >= 1){
       resolve();
       return;
     }
     const done = () => resolve();
-    video.addEventListener("loadeddata", done, { once:true });
+    video.addEventListener("loadedmetadata", done, { once:true });
     video.addEventListener("error", done, { once:true });
+    setTimeout(resolve, 1800);
+    video.load();
   });
 
   return Promise.all([...imagePromises, videoPromise]);
+}
+
+function bootApp(){
+  document.getElementById("loader").classList.add("hidden");
+  goTo(1);
 }
 
 function goTo(n){
@@ -948,11 +955,12 @@ document.getElementById("chatInput").addEventListener("keydown", event => {
 });
 
 window.addEventListener("load", async () => {
-  await preloadMedia();
-  setTimeout(() => {
-    document.getElementById("loader").classList.add("hidden");
-    goTo(1);
-  }, 2600);
+  await Promise.race([
+    preloadMedia(),
+    new Promise(resolve => setTimeout(resolve, 2200))
+  ]);
+
+  setTimeout(bootApp, 700);
 });
 
 showImg();
