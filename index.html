@@ -717,8 +717,8 @@ function unlock(){
   if(passInput.value === "01042018"){
     goTo(2);
     startPetals();
-    tryPlayMusic();
     prepareVideo();
+    tryPlayMusic();
   } else {
     showToast("That date is close to my heart too, but not that one.");
   }
@@ -727,6 +727,9 @@ function unlock(){
 function prepareVideo(){
   video.pause();
   video.currentTime = 0;
+  video.muted = true;
+  video.setAttribute("muted", "");
+  video.load();
   videoActions.innerHTML = "";
 
   video.onended = () => {
@@ -942,6 +945,7 @@ function startFinalRain(){
 
 function tryPlayMusic(){
   const music = document.getElementById("music");
+  if(!music) return;
   music.volume = 0.35;
   music.play().catch(() => {});
 }
